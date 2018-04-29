@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+    <h1>Sample Login With Nebulas Website</h1>
+    <p>This is what a website would need to do to use Login With Nebulas.</p>
+    <p>Ideally this should be linked with a username and password and values should be stores in a DB.</p>
+    <p>For the sake of the example I will just be showing the two Smart Contract calls.</p>
+    <p>Calls should also be done on a backend directly to a node, but for this example I will be using the chrome extension.</p>
+
+    <h3>User Sign In:</h3>
+    Nebulas Address<br>
+    <input type="text" id="address">
+    <br><br>
+    <input id="initiate_login" type="submit" value="Submit">
+
+    <div id="challenge">
+        <h4>Challenge: 12345</h4>
+        <h4>Address: (Should be the site address, but just use the address you have loaded into your wallet)</h4>
+
+    </div>
+
+    <h3>Press this button after you have completed your transaction at https://login-with-nebulas.firebaseapp.com/</h3>
+    <input id="finish" type="submit" value="Submit">
+
+</body>
+<script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyAJ2Q44p-tylDewcyz5OKO-Nvn-YYhrxyk",
+    authDomain: "lwn-sample-site.firebaseapp.com",
+    databaseURL: "https://lwn-sample-site.firebaseio.com",
+    projectId: "lwn-sample-site",
+    storageBucket: "",
+    messagingSenderId: "579910432234"
+  };
+  firebase.initializeApp(config);
+</script>
+<script src="jquery-2.2.4.min.js"></script>
+<script>
+    document.getElementById("challenge").style.display = "none";
+
+    var dappAddress = "n1jCSsXYiRKWTurEF9pHZyPBd7X8bikVpcq";
+
+    $("#initiate_login").click(function() {
+        document.getElementById("challenge").style.display = "block";
+
+        var func = "setChallenge"
+        var args = "[12345,\"" + $("#address").val() + "\"]"
+
+        window.postMessage({
+            "target": "contentscript",
+            "data": {
+                "to": dappAddress,
+                "value": "0",
+                "contract": {
+                    "function": func,
+                    "args": args
+                }
+            },
+            "method": "neb_sendTransaction"
+        }, "*");
+
+        alert("You now must go to https://login-with-nebulas.firebaseapp.com/ and submit your challenge")
+
+    })
+
+    $("#finish").click(function() {
+        var func = "validateAuthentication"
+        var args = "[\"" + $("#address").val() + "\"]"
+
+        window.postMessage({
+            "target": "contentscript",
+            "data": {
+                "to": dappAddress,
+                "value": "0",
+                "contract": {
+                    "function": func,
+                    "args": args
+                }
+            },
+            "method": "neb_call"
+        }, "*");
+
+    })
+    
+       // listen message from contentscript
+    window.addEventListener('message', function(e) {
+        if (!!e.data.data.account){
+            //document.getElementById("accountAddress").innerHTML= "Account address: " + e.data.data.account;
+        }
+        if (!!e.data.data.receipt){
+            //document.getElementById("txResult").innerHTML = "Transaction Receipt\n" +  JSON.stringify(e.data.data.receipt,null,'\t');
+        }
+        if (!!e.data.data.neb_call){
+            var result = e.data.data.neb_call.result
+            console.log(result)
+            if (result == "true"){
+                alert("Login Successful!")
+            } else {
+                alert("Login Failed :(")
+            }
+        }
+    });
+
+</script>
+
+</html>
