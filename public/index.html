@@ -27,22 +27,23 @@
 </body>
 <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
 <script>
-  // Initialize Firebase
-  var config = {
-    apiKey: "AIzaSyAJ2Q44p-tylDewcyz5OKO-Nvn-YYhrxyk",
-    authDomain: "lwn-sample-site.firebaseapp.com",
-    databaseURL: "https://lwn-sample-site.firebaseio.com",
-    projectId: "lwn-sample-site",
-    storageBucket: "",
-    messagingSenderId: "579910432234"
-  };
-  firebase.initializeApp(config);
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyAJ2Q44p-tylDewcyz5OKO-Nvn-YYhrxyk",
+        authDomain: "lwn-sample-site.firebaseapp.com",
+        databaseURL: "https://lwn-sample-site.firebaseio.com",
+        projectId: "lwn-sample-site",
+        storageBucket: "",
+        messagingSenderId: "579910432234"
+    };
+    firebase.initializeApp(config);
+
 </script>
 <script src="jquery-2.2.4.min.js"></script>
 <script>
     document.getElementById("challenge").style.display = "none";
 
-    var dappAddress = "n1jCSsXYiRKWTurEF9pHZyPBd7X8bikVpcq";
+    var dappAddress = "n1sUEGwVbbPvuQrDZmtUYwCHsk6eRMvnJVg";
 
     $("#initiate_login").click(function() {
         document.getElementById("challenge").style.display = "block";
@@ -85,19 +86,19 @@
         }, "*");
 
     })
-    
-       // listen message from contentscript
+
+    // listen message from contentscript
     window.addEventListener('message', function(e) {
-        if (!!e.data.data.account){
+        if (!!e.data.data.account) {
             //document.getElementById("accountAddress").innerHTML= "Account address: " + e.data.data.account;
         }
-        if (!!e.data.data.receipt){
+        if (!!e.data.data.receipt) {
             //document.getElementById("txResult").innerHTML = "Transaction Receipt\n" +  JSON.stringify(e.data.data.receipt,null,'\t');
         }
-        if (!!e.data.data.neb_call){
+        if (!!e.data.data.neb_call) {
             var result = e.data.data.neb_call.result
             console.log(result)
-            if (result == "true"){
+            if (result == "true") {
                 alert("Login Successful!")
             } else {
                 alert("Login Failed :(")
